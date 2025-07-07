@@ -1,0 +1,59 @@
+{
+  "name": "@scribeup/react-native-scribeup",
+  "version": "0.0.2",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "description": "ScribeUp React Native SDK",
+  "react-native": "src/index",
+  "source": "src/index",
+  "homepage": "https://github.com/ScribeUp/react-native-scribeup",
+  "files": [
+    "src",
+    "android",
+    "ios",
+    "RNScribeupSDK.podspec",
+    "!android/build",
+    "!ios/build",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "./scripts/dev.sh",
+    "expo": "./scripts/dev_expo.sh",
+    "release": "node scripts/release.js",
+    "copy-files": "node scripts/copy-files.js"
+  },
+  "author": "ScribeUp",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "devDependencies": {
+    "@types/react-native": "^0.72.2",
+    "concurrently": "^9.2.0",
+    "prettier": "^3.3.3",
+    "typescript": "^4.9.5"
+  },
+  "codegenConfig": {
+    "name": "RNScribeUpSpec",
+    "type": "all",
+    "jsSrcsDir": "./src",
+    "outputDir": {
+      "ios": "ios/generated",
+      "android": "android/generated"
+    },
+    "android": {
+      "javaPackageName": "com.rnscribeupsdk"
+    }
+  },
+  "config": {
+    "nativeSDKVersions": {
+      "android": "0.5.0",
+      "ios": "0.5.7"
+    }
+  }
+}

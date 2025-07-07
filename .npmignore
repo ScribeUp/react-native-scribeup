@@ -1,0 +1,15 @@
+example/
+example_expo/
+node_modules/
+src/
+README.md
+scribeup-react-native-scribeup-*.tgz
+scripts/
+tsconfig.json
+.vscode/
+.gitignore
+.git/
+.github/
+.circleci/
+.prettierrc
+.prettierignore
