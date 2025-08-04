@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   Button,
   KeyboardAvoidingView,
@@ -9,14 +9,19 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import ScribeUp from '@scribeup/react-native-scribeup'
+import ScribeUp, {
+  ScribeUpWidget,
+  ScribeupWidgetViewRef,
+} from '@scribeup/react-native-scribeup';
 
 export default function App() {
   const [url, setUrl] = useState(
-    'https://alpha.widget.scribeup.io/preview#eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicHJldmlldyIsImV4cCI6MTc2NjQ0NzQ2MCwiaWF0IjoxNzUwODk1NDYwLCJqdGkiOiJmODVjZjlkNTUxNWQ0ZjVjODc0NmUwOTRmOWU2ZGQ1NCIsInVzZXJfaWQiOiI5NjA5OGQ1MS0xNGFmLTQzMTgtYjVlYS1iYmFiOGMzYWU1NDYifQ.dnnO8XD1ypjnJN0K7_Z5VWA_kLV_B3eJ3-JVWi5iXtU'
+    'https://alpha.widget.scribeup.io/preview#eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicHJldmlldyIsImV4cCI6MTc2NjQ0NzQ2MCwiaWF0IjoxNzUwODk1NDYwLCJqdGkiOiJmODVjZjlkNTUxNWQ0ZjVjODc0NmUwOTRmOWU2ZGQ1NCIsInVzZXJfaWQiOiI5NjA5OGQ1MS0xNGFmLTQzMTgtYjVlYS1iYmFiOGMzYWU1NDYifQ.dnnO8XD1ypjnJN0K7_Z5VWA_kLV_B3eJ3-JVWi5iXtU',
   );
   const [productName, setProductName] = useState('');
   const [showScribeup, setShowScribeup] = useState(false);
+  const [showWidget, setShowWidget] = useState(false);
+  const widgetRef = useRef<ScribeupWidgetViewRef>(null);
 
   const onExitHandler = (data?: { message?: string; code?: number }) => {
     console.log('onExitHandler', data);
@@ -25,6 +30,14 @@ export default function App() {
 
   const handleOpenScribeup = () => {
     setShowScribeup(true);
+  };
+
+  const handleToggleWidget = () => {
+    setShowWidget(!showWidget);
+  };
+
+  const handleReloadWidget = () => {
+    widgetRef.current?.reload();
   };
 
   return (
@@ -59,7 +72,37 @@ export default function App() {
               placeholder="Enter product name"
             />
 
-            <Button title="Open ScribeUp" onPress={handleOpenScribeup} />
+            <Button
+              title="Open ScribeUp (Full Screen)"
+              onPress={handleOpenScribeup}
+            />
+
+            <View style={styles.separator} />
+
+            <Text style={styles.sectionTitle}>Widget Demo</Text>
+            <Text style={styles.description}>
+              The widget is a flexible view that can be embedded anywhere in
+              your app.
+            </Text>
+
+            <Button
+              title={showWidget ? 'Hide Widget' : 'Show Widget'}
+              onPress={handleToggleWidget}
+            />
+
+            {showWidget && (
+              <View style={styles.widgetSection}>
+                <View style={styles.widgetControls}>
+                  <Button title="Reload" onPress={handleReloadWidget} />
+                </View>
+
+                <ScribeUpWidget
+                  ref={widgetRef}
+                  url={url}
+                  style={styles.widget}
+                />
+              </View>
+            )}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -107,5 +150,34 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 20,
     paddingHorizontal: 10,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#ddd',
+    marginVertical: 30,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    alignSelf: 'center',
+  },
+  widgetSection: {
+    marginTop: 20,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 10,
+  },
+  widgetControls: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 15,
+  },
+  widget: {
+    height: 300,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
   },
 });

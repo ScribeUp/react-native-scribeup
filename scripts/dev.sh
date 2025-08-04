@@ -53,7 +53,7 @@ npm i
 
 if [ "$PLATFORM" = "ios" ]; then
   echo "Starting iOS development server..."
-  ./node_modules/.bin/concurrently "npx react-native start --reset-cache" "cd ios && pod install && cd ../ && npm run ios"
+  ./node_modules/.bin/concurrently "npx react-native start --reset-cache" "cd ios && (test -f Podfile.lock && pod update ScribeUpSDK || true) && pod install && cd ../ && npm run ios"
 elif [ "$PLATFORM" = "android" ]; then
   echo "Starting Android development server..."
   ./node_modules/.bin/concurrently "npx react-native start --reset-cache" "npm run android"

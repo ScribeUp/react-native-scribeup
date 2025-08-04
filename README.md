@@ -11,11 +11,14 @@ The package is a thin wrapper around the native [iOS](https://github.com/ScribeU
    1. [Bare React-Native](#bare-react-native)
    2. [Expo Projects](#expo-projects)
 2. [Quick Start](#quick-start)
-3. [API Reference](#api-reference)
-4. [Example Projects](#example-projects)
-5. [Troubleshooting](#troubleshooting)
-6. [Author](#author)
-7. [License](#license)
+3. [Components](#components)
+   1. [ScribeUp (Full Screen)](#scribeup-full-screen)
+   2. [ScribeUpWidget (Embeddable)](#scribeupwidget-embeddable)
+4. [API Reference](#api-reference)
+5. [Example Projects](#example-projects)
+6. [Troubleshooting](#troubleshooting)
+7. [Author](#author)
+8. [License](#license)
 
 
 ## Installation
@@ -81,9 +84,51 @@ export default function App() {
 
 ---
 
+## Components
+
+The SDK provides two components for different integration scenarios:
+
+### ScribeUp (Full Screen)
+
+The main component that presents a full-screen modal subscription manager.
+
+### ScribeUpWidget (Embeddable)
+
+A lightweight widget view that can be embedded anywhere in your app and sized however you want.
+
+```tsx
+import { ScribeUpWidget, ScribeupWidgetViewRef } from "@scribeup/react-native-scribeup";
+
+export default function MyComponent() {
+  const widgetRef = useRef<ScribeupWidgetViewRef>(null);
+
+  const handleReload = () => {
+    widgetRef.current?.reload();
+  };
+
+
+  return (
+    <ScribeUpWidget
+      ref={widgetRef}
+      url="https://your-subscription-url.com"
+      style={{ width: '100%', height: 400 }}
+    />
+  );
+}
+```
+
+**Key differences from the full-screen component:**
+- Takes only one required parameter: `url`
+- Has no header or navigation controls
+- Can be sized and positioned flexibly
+- Focused purely on displaying web content
+- Provides imperative methods via ref (`reload()`, `loadURL()`)
+
+---
+
 ## API Reference
 
-ScribeUp is a *React component*. Mounting it immediately presents the native subscription-manager UI.
+### ScribeUp (Full Screen)
 
 ```
 <ScribeUp
@@ -92,6 +137,20 @@ ScribeUp is a *React component*. Mounting it immediately presents the native sub
   onExit?: (data?) => void; // optional – called when the user exits, with optional error
 />
 ```
+
+### ScribeUpWidget (Embeddable)
+
+```
+<ScribeUpWidget
+  url: string;              // required – authenticated manage-subscriptions URL
+  style?: ViewStyle;        // optional – styling for the widget container
+  ref?: ScribeupWidgetViewRef; // optional – ref for imperative methods
+/>
+```
+
+**Ref methods:**
+- `reload()` – reloads the current page
+- `loadURL(url: string)` – loads a new URL
 
 ### Exit Callback
 
