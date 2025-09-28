@@ -15,9 +15,7 @@ import ScribeUp, {
 } from '@scribeup/react-native-scribeup';
 
 export default function App() {
-  const [url, setUrl] = useState(
-    'https://alpha.widget.scribeup.io/preview#eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicHJldmlldyIsImV4cCI6MTc2NjQ0NzQ2MCwiaWF0IjoxNzUwODk1NDYwLCJqdGkiOiJmODVjZjlkNTUxNWQ0ZjVjODc0NmUwOTRmOWU2ZGQ1NCIsInVzZXJfaWQiOiI5NjA5OGQ1MS0xNGFmLTQzMTgtYjVlYS1iYmFiOGMzYWU1NDYifQ.dnnO8XD1ypjnJN0K7_Z5VWA_kLV_B3eJ3-JVWi5iXtU',
-  );
+  const [url, setUrl] = useState('');
   const [productName, setProductName] = useState('');
   const [showScribeup, setShowScribeup] = useState(false);
   const [showWidget, setShowWidget] = useState(false);
