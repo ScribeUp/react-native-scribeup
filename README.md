@@ -204,9 +204,9 @@ The first execution may take a while – the scripts:
 
 ## Troubleshooting
 
-1. **iOS: `The package '@scribeup/react-native-scribeup' doesn't seem to be linked`.**  
+1. **iOS: `The package '@scribeup/react-native-scribeup' doesn't seem to be linked`.**
    Make sure you ran `pod install` after installing the package and rebuilt the app.
-2. **Expo Go crashes when opening the manager.**  
+2. **Expo Go crashes when opening the manager.**
    Expo Go does not include native code. Use a dev-client or production build.
 3. Still stuck? Reach us at **dev@scribeup.io** or open an issue.
 

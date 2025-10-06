@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import io.scribeup.scribeupsdk.SubscriptionManager
@@ -38,7 +39,13 @@ class ScribeupModuleImpl(private val reactContext: ReactApplicationContext) {
     if (activity == null) {
       Log.e("Scribeup", "Activity is null")
       val error = SubscriptionManagerError(message = "Activity is null", code = ErrorCodes.ACTIVITY_NULL)
-      exitCallback?.invoke(error)
+      val params = Arguments.createMap().apply {
+        putMap("error", Arguments.createMap().apply {
+          putInt("code", error.code)
+          putString("message", error.message)
+        })
+      }
+      sendEvent("ScribeupOnExit", params)
       return
     }
 
@@ -46,7 +53,13 @@ class ScribeupModuleImpl(private val reactContext: ReactApplicationContext) {
     if (activity !is FragmentActivity) {
       Log.e("Scribeup", "Activity is not a FragmentActivity")
       val error = SubscriptionManagerError(message = "Activity is not a FragmentActivity", code = ErrorCodes.INVALID_ACTIVITY_TYPE)
-      exitCallback?.invoke(error)
+      val params = Arguments.createMap().apply {
+        putMap("error", Arguments.createMap().apply {
+          putInt("code", error.code)
+          putString("message", error.message)
+        })
+      }
+      sendEvent("ScribeupOnExit", params)
       return
     }
 
@@ -54,7 +67,13 @@ class ScribeupModuleImpl(private val reactContext: ReactApplicationContext) {
     if (!isValidUrl(url)) {
       Log.e("Scribeup", "Invalid URL: $url")
       val error = SubscriptionManagerError(message = "Invalid URL: $url", code = ErrorCodes.INVALID_URL)
-      exitCallback?.invoke(error)
+      val params = Arguments.createMap().apply {
+        putMap("error", Arguments.createMap().apply {
+          putInt("code", error.code)
+          putString("message", error.message)
+        })
+      }
+      sendEvent("ScribeupOnExit", params)
       return
     }
 
@@ -64,22 +83,41 @@ class ScribeupModuleImpl(private val reactContext: ReactApplicationContext) {
         url = url,
         productName = productName,
         listener = object : SubscriptionManagerListener {
-          override fun onExit(error: SubscriptionManagerError?) {
+          override fun onExit(error: SubscriptionManagerError?, data: Map<String, Any?>?) {
             val params = Arguments.createMap()
 
             if (error != null) {
-              params.putString("message", error.message)
-              params.putInt("code", error.code)
+              params.putMap("error", Arguments.createMap().apply {
+                putInt("code", error.code)
+                putString("message", error.message)
+              })
             }
 
-            exitCallback?.invoke(error)
+            if (data != null) {
+              params.putMap("data", toWritableMap(data))
+            }
+
+            sendEvent("ScribeupOnExit", params)
+          }
+
+          override fun onEvent(data: Map<String, Any?>) {
+            val params = Arguments.createMap().apply {
+              putMap("data", toWritableMap(data))
+            }
+            sendEvent("ScribeupOnEvent", params)
           }
         }
       )
     } catch (e: Exception) {
       Log.e("Scribeup", "Error presenting subscription manager: ${e.message}")
       val error = SubscriptionManagerError(message = e.message ?: "Unknown error", code = ErrorCodes.UNKNOWN)
-      exitCallback?.invoke(error)
+      val params = Arguments.createMap().apply {
+        putMap("error", Arguments.createMap().apply {
+          putInt("code", error.code)
+          putString("message", error.message)
+        })
+      }
+      sendEvent("ScribeupOnExit", params)
     }
   }
 
@@ -97,21 +135,56 @@ class ScribeupModuleImpl(private val reactContext: ReactApplicationContext) {
     reactContext.runOnUiQueueThread {
       try {
         val eventEmitter = reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-
-        val newParams = Arguments.createMap()
-        if (params != null) {
-          if (params.hasKey("message")) {
-            newParams.putString("message", params.getString("message"))
-          }
-          if (params.hasKey("code")) {
-            newParams.putString("code", params.getString("code"))
-          }
-        }
-
-        eventEmitter.emit("ScribeupExitSignal", newParams)
+        eventEmitter.emit(eventName, params ?: Arguments.createMap())
       } catch (e: Exception) {
         Log.e("Scribeup", "Error emitting event: ${e.message}")
       }
     }
+  }
+
+  // -------------------- Converters: Map/List -> Writable* --------------------
+
+  @Suppress("UNCHECKED_CAST")
+  private fun toWritableMap(map: Map<String, Any?>): WritableMap {
+    val out = Arguments.createMap()
+    for ((kAny, v) in map) {
+      val key = kAny as String
+      when (v) {
+        null -> out.putNull(key)
+        is String -> out.putString(key, v)
+        is Int -> out.putInt(key, v)
+        is Long -> {
+          if (v in Int.MIN_VALUE..Int.MAX_VALUE) out.putInt(key, v.toInt()) else out.putDouble(key, v.toDouble())
+        }
+        is Float -> out.putDouble(key, v.toDouble())
+        is Double -> out.putDouble(key, v)
+        is Boolean -> out.putBoolean(key, v)
+        is Map<*, *> -> out.putMap(key, toWritableMap(v as Map<String, Any?>))
+        is List<*> -> out.putArray(key, toWritableArray(v))
+        else -> out.putString(key, v.toString())
+      }
+    }
+    return out
+  }
+
+  private fun toWritableArray(list: List<*>): WritableArray {
+    val out = Arguments.createArray()
+    for (v in list) {
+      when (v) {
+        null -> out.pushNull()
+        is String -> out.pushString(v)
+        is Int -> out.pushInt(v)
+        is Long -> {
+          if (v in Int.MIN_VALUE..Int.MAX_VALUE) out.pushInt(v.toInt()) else out.pushDouble(v.toDouble())
+        }
+        is Float -> out.pushDouble(v.toDouble())
+        is Double -> out.pushDouble(v)
+        is Boolean -> out.pushBoolean(v)
+        is Map<*, *> -> out.pushMap(toWritableMap(v as Map<String, Any?>))
+        is List<*> -> out.pushArray(toWritableArray(v))
+        else -> out.pushString(v.toString())
+      }
+    }
+    return out
   }
 }

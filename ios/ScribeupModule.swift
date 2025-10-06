@@ -24,7 +24,7 @@ class Scribeup: RCTEventEmitter {
 
   @objc
   override func supportedEvents() -> [String] {
-    return ["ScribeupOnExit"]
+    return ["ScribeupOnExit", "ScribeupOnEvent"]
   }
 
   // MARK: - Properties
@@ -60,15 +60,24 @@ class Scribeup: RCTEventEmitter {
     }
   }
 
-  func sendExitEvent(error: SubscriptionManagerError?) {
+  func sendExitEvent(error: SubscriptionManagerError?, data: [String: Any]?) {
     if self.hasListeners {
       var body: [String: Any] = [:]
 
       if let error = error {
-        body["error"] = ["code": ErrorCodes.sdkError, "message": error.message]
+        body["error"] = ["code": error.code, "message": error.message]
+      }
+      if let data = data {
+        body["data"] = data
       }
 
       self.sendEvent(withName: "ScribeupOnExit", body: body)
+    }
+  }
+
+  func sendOnEvent(data: [String: Any]) {
+    if self.hasListeners {
+      self.sendEvent(withName: "ScribeupOnEvent", body: ["data": data])
     }
   }
 
@@ -88,18 +97,24 @@ class ScribeupSubscriptionListener: NSObject, SubscriptionManagerListener {
         self.delegate = delegate
     }
 
-    func onExit(_ error: SubscriptionManagerError?) {
+    func onExit(_ error: SubscriptionManagerError?, _ data: [String: Any]?) {
         if let delegate = self.delegate {
             if let error = error {
                 delegate.rejecter?(String(error.code), error.message, nil)
             } else {
-                delegate.resolver?(nil)
+                var payload: [String: Any] = [:]
+                if let data = data { payload["data"] = data }
+                delegate.resolver?(payload)
             }
 
             delegate.resolver = nil
             delegate.rejecter = nil
         }
 
-        self.delegate?.sendExitEvent(error: error)
+        self.delegate?.sendExitEvent(error: error, data: data)
+    }
+
+    func onEvent(_ data: [String: Any]) {
+        self.delegate?.sendOnEvent(data: data)
     }
 }

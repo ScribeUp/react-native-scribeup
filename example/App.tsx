@@ -21,9 +21,13 @@ export default function App() {
   const [showWidget, setShowWidget] = useState(false);
   const widgetRef = useRef<ScribeupWidgetViewRef>(null);
 
-  const onExitHandler = (data?: { message?: string; code?: number }) => {
-    console.log('onExitHandler', data);
+  const onExitHandler = (error?: { message?: string; code?: number }, data?) => {
+    console.log('onExitHandler', error, data);
     setShowScribeup(false);
+  };
+
+  const onEventHandler = (data?) => {
+    console.log('onEventHandler', data);
   };
 
   const handleOpenScribeup = () => {
@@ -105,7 +109,7 @@ export default function App() {
         </ScrollView>
       </KeyboardAvoidingView>
       {showScribeup && (
-        <ScribeUp url={url} productName={productName} onExit={onExitHandler} />
+        <ScribeUp url={url} productName={productName} onExit={onExitHandler} onEvent={onEventHandler} />
       )}
     </View>
   );
