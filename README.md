@@ -15,11 +15,13 @@ The package is a thin wrapper around the native [iOS](https://github.com/ScribeU
    1. [ScribeUp (Full Screen)](#scribeup-full-screen)
    2. [ScribeUpWidget (Embeddable)](#scribeupwidget-embeddable)
 4. [API Reference](#api-reference)
-5. [Example Projects](#example-projects)
-6. [Troubleshooting](#troubleshooting)
-7. [Author](#author)
-8. [License](#license)
+5. [Migration Note (0.3.x → 0.6.0)](#migration-note-03x--060)
+6. [Example Projects](#example-projects)
+7. [Troubleshooting](#troubleshooting)
+8. [Author](#author)
+9. [License](#license)
 
+---
 
 ## Installation
 
@@ -56,9 +58,13 @@ export default function App() {
 
   const authenticatedUrl = "https://example.com/subscriptions?token=YOUR_JWT"; // Obtain from your backend (see docs)
 
-  const handleExit = (data?: { message?: string; code?: number }) => {
-    console.log("ScribeUp finished", data);
+  const handleExit = (error: { code?: number; message?: string } | null, data: Record<string, any> | null) => {
+    console.log("ScribeUp exited", { error, data });
     setVisible(false);
+  };
+
+  const handleEvent = (data: Record<string, any>) => {
+    console.log("ScribeUp event", data);
   };
 
   return (
@@ -71,6 +77,7 @@ export default function App() {
           url={authenticatedUrl}
           productName="Subscription Manager" // optional text in the nav-bar
           onExit={handleExit} // called on success or error
+          onEvent={handleEvent}
         />
       )}
     </SafeAreaView>
@@ -130,13 +137,24 @@ export default function MyComponent() {
 
 ### ScribeUp (Full Screen)
 
-```
+```tsx
 <ScribeUp
-  url: string;              // required – authenticated manage-subscriptions URL
-  productName?: string;     // optional – title shown in the navigation bar
-  onExit?: (data?) => void; // optional – called when the user exits, with optional error
-/>
+  url: string;                              // required – authenticated manage-subscriptions URL
+  productName?: string;                     // optional – title in navigation bar
+  onExit?: (error: ExitError|null, data: object|null) => void;
+  onEvent?: (data: object) => void;
+>
 ```
+
+**`onExit`**
+Called when the user exits the flow.
+Receives two arguments:
+- `error`: `{ code: number; message?: string }` or `null` on success
+- `data`: structured object with optional payload
+
+**`onEvent`**
+Emitted zero or more times during the session to notify about intermediate states or actions (e.g., UI transitions, user actions).
+
 
 ### ScribeUpWidget (Embeddable)
 
@@ -152,14 +170,12 @@ export default function MyComponent() {
 - `reload()` – reloads the current page
 - `loadURL(url: string)` – loads a new URL
 
-### Exit Callback
+---
 
-`onExit` receives an object with two optional fields:
+## Migration Note (0.3.x → 0.6.0)
 
-* `message` – descriptive error or informational message.
-* `code` – numeric error code (0 on success, -1 on unknown error).
-
-If both fields are undefined, the flow completed without errors.
+- `onExit` now receives **two parameters**: `(error, data)` instead of a single `data` object.
+- New `onEvent(data)` listener added for real-time progress updates.
 
 ---
 
