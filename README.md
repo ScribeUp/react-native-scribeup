@@ -58,7 +58,7 @@ export default function App() {
 
   const authenticatedUrl = "https://example.com/subscriptions?token=YOUR_JWT"; // Obtain from your backend (see docs)
 
-  const handlonst authenticateExit = (error: { code?: number; message?: string } | null, data: Record<string, any> | null) => {
+  const handleExit = (error: { code?: number; message?: string } | null, data: Record<string, any> | null) => {
     console.log("ScribeUp exited", { error, data });
     setVisible(false);
   };
@@ -154,6 +154,21 @@ Receives two arguments:
 
 **`onEvent`**
 Emitted zero or more times during the session to notify about intermediate states or actions (e.g., UI transitions, user progress, or specific merchant events).
+
+
+### ScribeUpWidget (Embeddable)
+
+```
+<ScribeUpWidget
+  url: string;              // required – authenticated manage-subscriptions URL
+  style?: ViewStyle;        // optional – styling for the widget container
+  ref?: ScribeupWidgetViewRef; // optional – ref for imperative methods
+/>
+```
+
+**Ref methods:**
+- `reload()` – reloads the current page
+- `loadURL(url: string)` – loads a new URL
 
 ---
 
