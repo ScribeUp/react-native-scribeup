@@ -15,7 +15,7 @@ The package is a thin wrapper around the native [iOS](https://github.com/ScribeU
    1. [ScribeUp (Full Screen)](#scribeup-full-screen)
    2. [ScribeUpWidget (Embeddable)](#scribeupwidget-embeddable)
 4. [API Reference](#api-reference)
-5. [MigrationNote (0.3.x → 0.6.0)](#migration-note-03x--060)
+5. [Migration Note (0.3.x → 0.6.0)](#migration-note-03x--060)
 6. [Example Projects](#example-projects)
 7. [Troubleshooting](#troubleshooting)
 8. [Author](#author)
@@ -147,13 +147,13 @@ export default function MyComponent() {
 ```
 
 **`onExit`**
-Called exactly once when the user exits the flow (either by completing or canceling).
+Called when the user exits the flow.
 Receives two arguments:
 - `error`: `{ code: number; message?: string }` or `null` on success
-- `data`: structured object with optional payload returned by the SDK
+- `data`: structured object with optional payload
 
 **`onEvent`**
-Emitted zero or more times during the session to notify about intermediate states or actions (e.g., UI transitions, user progress, or specific merchant events).
+Emitted zero or more times during the session to notify about intermediate states or actions (e.g., UI transitions, user actions).
 
 
 ### ScribeUpWidget (Embeddable)
@@ -172,7 +172,7 @@ Emitted zero or more times during the session to notify about intermediate state
 
 ---
 
-## Migration Note (0.3.x → 0.5.0)
+## Migration Note (0.3.x → 0.6.0)
 
 - `onExit` now receives **two parameters**: `(error, data)` instead of a single `data` object.
 - New `onEvent(data)` listener added for real-time progress updates.
