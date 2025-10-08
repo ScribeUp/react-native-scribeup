@@ -16,12 +16,12 @@ import java.net.URL
 
 // Error codes shared between iOS and Android
 object ErrorCodes {
-  const val UNKNOWN = -1
+  const val UNKNOWN = 1000
   const val INVALID_URL = 1001
-  const val ACTIVITY_NULL = 1002
-  const val INVALID_ACTIVITY_TYPE = 1003
-  const val NO_ROOT_VIEW_CONTROLLER = 1004
-  const val SDK_ERROR = 2001
+  const val INVALID_ENV = 1002
+  const val ACTIVITY_NULL = 1003
+  const val INVALID_ACTIVITY_TYPE = 1004
+  const val NO_ROOT_VIEW_CONTROLLER = 1005
 }
 
 class ScribeupModuleImpl(private val reactContext: ReactApplicationContext) {
@@ -110,7 +110,7 @@ class ScribeupModuleImpl(private val reactContext: ReactApplicationContext) {
       )
     } catch (e: Exception) {
       Log.e("Scribeup", "Error presenting subscription manager: ${e.message}")
-      val error = SubscriptionManagerError(message = e.message ?: "Unknown error", code = ErrorCodes.UNKNOWN)
+      val error = SubscriptionManagerError(message = e.message ?: "Unexpected Error", code = ErrorCodes.UNKNOWN)
       val params = Arguments.createMap().apply {
         putMap("error", Arguments.createMap().apply {
           putInt("code", error.code)

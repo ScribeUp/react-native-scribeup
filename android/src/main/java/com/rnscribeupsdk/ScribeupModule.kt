@@ -41,7 +41,7 @@ class ScribeupModule(reactContext: ReactApplicationContext) :
         if (error != null) {
           val params = Arguments.createMap()
           params.putString("message", error.message)
-          params.putString("code", error.code.toString())
+          params.putInt("code", error.code)
           currentPromise?.resolve(params)
         } else {
           currentPromise?.resolve(null)
@@ -50,8 +50,8 @@ class ScribeupModule(reactContext: ReactApplicationContext) :
       }
     } catch (e: Exception) {
       val params = Arguments.createMap()
-      params.putString("message", e.message ?: "Unknown error")
-      params.putString("code", "-1")
+      params.putString("message", e.message ?: "Unexpected Error")
+      params.putInt("code", 1000)
       promise.resolve(params)
       currentPromise = null
     }

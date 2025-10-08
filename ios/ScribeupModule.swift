@@ -4,12 +4,12 @@ import React
 
 // MARK: - Error Codes (shared between iOS and Android)
 fileprivate enum ErrorCodes {
-  static let unknown = -1
-  static let invalidUrl = 1001
-  static let activityNull = 1002
-  static let invalidActivityType = 1003
-  static let noRootViewController = 1004
-  static let sdkError = 2001
+  static let UNKNOWN = 1000
+  static let INVALID_URL = 1001
+  static let INVALID_ENV = 1002
+  static let ACTIVITY_NULL = 1003
+  static let INVALID_ACTIVITY_TYPE = 1004
+  static let NO_ROOT_VIEW_CONTROLLER = 1005
 }
 
 @objc(Scribeup)
@@ -46,7 +46,7 @@ class Scribeup: RCTEventEmitter {
 
     DispatchQueue.main.async {
       guard let rootVC = UIApplication.shared.delegate?.window??.rootViewController else {
-        self.rejecter?(String(ErrorCodes.noRootViewController), "Cannot find root view controller", nil)
+        self.rejecter?(String(ErrorCodes.NO_ROOT_VIEW_CONTROLLER), "Cannot find root view controller", nil)
         return
       }
 

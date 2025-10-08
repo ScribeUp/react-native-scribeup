@@ -54,7 +54,7 @@ type EventPayload = { data?: JsonObject };
  */
 export interface ScribeUpProps {
   url: string;
-  productName: string;
+  productName?: string;
   onExit?: (error: ExitError | null, data: JsonObject | null) => void;
   onEvent?: (data: JsonObject) => void;
 }
@@ -72,7 +72,7 @@ class ScribeUp extends React.Component<ScribeUpProps> {
   private didExit = false;
 
   componentDidMount() {
-    const { url, productName } = this.props;
+    const { url, productName = "" } = this.props;
 
     // Use module-backed emitter only if it implements the listener API.
     const canAttach =
@@ -90,7 +90,7 @@ class ScribeUp extends React.Component<ScribeUpProps> {
         this.didExit = true;
 
         const error: ExitError | null = payload?.error
-          ? { code: Number(payload.error.code ?? -1), message: payload.error.message }
+          ? { code: Number(payload.error.code ?? 1000), message: payload.error.message }
           : null;
 
         const data: JsonObject | null =
@@ -145,7 +145,7 @@ class ScribeUp extends React.Component<ScribeUpProps> {
             this.didExit = true;
 
             const error: ExitError | null = result?.error
-              ? { code: Number(result.error.code ?? -1), message: result.error.message }
+              ? { code: Number(result.error.code ?? 1000), message: result.error.message }
               : null;
 
             const data: JsonObject | null =
@@ -159,7 +159,7 @@ class ScribeUp extends React.Component<ScribeUpProps> {
             if (this.didExit) return;
             this.didExit = true;
             this.props.onExit?.(
-              { code: Number(err?.code ?? -1), message: err?.message || "Unknown error" },
+              { code: Number(err?.code ?? 1000), message: err?.message || "Unexpected Error" },
               null,
             );
           });
@@ -168,7 +168,7 @@ class ScribeUp extends React.Component<ScribeUpProps> {
       if (this.didExit) return;
       this.didExit = true;
       this.props.onExit?.(
-        { code: Number(err?.code ?? -1), message: err?.message || "Unknown error" },
+        { code: Number(err?.code ?? 1000), message: err?.message || "Unexpected Error" },
         null,
       );
     }

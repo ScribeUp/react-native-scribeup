@@ -109,7 +109,12 @@ export default function App() {
         </ScrollView>
       </KeyboardAvoidingView>
       {showScribeup && (
-        <ScribeUp url={url} productName={productName} onExit={onExitHandler} onEvent={onEventHandler} />
+        <ScribeUp
+          url={url}
+          productName={productName}
+          onExit={onExitHandler}
+          onEvent={onEventHandler}
+        />
       )}
     </View>
   );
