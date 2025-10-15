@@ -9,7 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@scribeup/react-native-scribeup": "file:../scribeup-react-native-scribeup-0.6.1.tgz",
+    "@scribeup/react-native-scribeup": "file:../scribeup-react-native-scribeup-0.6.6.tgz",
     "expo": "~53.0.13",
     "expo-status-bar": "~2.2.3",
     "memoize-one": "^6.0.0",
