@@ -160,19 +160,19 @@ Combined script that builds and then runs the Expo APK.
 adb logcat | grep 'com.example'
 
 # View app logs (Expo)
-adb logcat | grep 'com.anonymous.example_expo'
+adb logcat | grep 'io.scribeup.exposcribeupsdkexample'
 
 # Stop the app (React Native)
 adb shell am force-stop com.example
 
 # Stop the app (Expo)
-adb shell am force-stop com.anonymous.example_expo
+adb shell am force-stop io.scribeup.exposcribeupsdkexample
 
 # Uninstall the app (React Native)
 adb uninstall com.example
 
 # Uninstall the app (Expo)
-adb uninstall com.anonymous.example_expo
+adb uninstall io.scribeup.exposcribeupsdkexample
 
 # List connected devices
 adb devices
@@ -202,8 +202,8 @@ emulator -list-avds
 - Uses React Native CLI for bundling
 
 ### Expo
-- Scripts use the Expo example app in the `example_expo/` directory  
-- Package name: `com.anonymous.example_expo` (defined in `app.json` and `build.gradle`)
+- Scripts use the Expo example app in the `example_expo/` directory
+- Package name: `io.scribeup.exposcribeupsdkexample` (defined in `app.json` and `build.gradle`)
 - Uses Expo CLI for bundling (`expo export:embed`)
 - Requires `expo prebuild` to generate Android project if not present
 
