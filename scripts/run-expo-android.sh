@@ -53,47 +53,47 @@ DEVICES=$(adb devices | grep -v "List of devices" | grep -v "^$" | wc -l)
 
 if [ "$DEVICES" -eq 0 ]; then
     echo -e "${YELLOW}⚠️  No Android devices or emulators found${NC}"
-    
+
     # Check if emulator command is available
     if ! command -v emulator &> /dev/null; then
         echo -e "${RED}❌ emulator command not found. Please install Android SDK and add emulator to your PATH${NC}"
         echo -e "${YELLOW}💡 Or connect an Android device with USB debugging enabled${NC}"
         exit 1
     fi
-    
+
     # List available AVDs
     echo -e "${BLUE}📱 Looking for available emulators...${NC}"
     AVDS=$(emulator -list-avds 2>/dev/null)
-    
+
     if [ -z "$AVDS" ]; then
         echo -e "${RED}❌ No Android Virtual Devices (AVDs) found${NC}"
         echo -e "${YELLOW}💡 Please create an AVD using Android Studio or avdmanager${NC}"
         echo -e "${YELLOW}💡 Or connect an Android device with USB debugging enabled${NC}"
         exit 1
     fi
-    
+
     echo -e "${GREEN}📱 Available emulators:${NC}"
     echo "$AVDS" | while read -r avd; do
         echo -e "${YELLOW}  • $avd${NC}"
     done
-    
+
     # Get the first AVD
     FIRST_AVD=$(echo "$AVDS" | head -n 1)
-    
+
     # Ask user if they want to start an emulator
     echo -e "${BLUE}🚀 Would you like to start the '$FIRST_AVD' emulator? (y/N)${NC}"
     read -r -t 10 response || response="y"  # Default to yes after 10 seconds
-    
+
     if [[ "$response" =~ ^[Yy]$ ]] || [[ -z "$response" ]]; then
         echo -e "${BLUE}🚀 Starting emulator '$FIRST_AVD'...${NC}"
         echo -e "${YELLOW}💡 This may take a few minutes...${NC}"
-        
+
         # Start emulator in background
         emulator -avd "$FIRST_AVD" -no-snapshot-save -no-boot-anim &
         EMULATOR_PID=$!
-        
+
         echo -e "${BLUE}⏳ Waiting for emulator to boot...${NC}"
-        
+
         # Wait for emulator to be ready (max 2 minutes)
         TIMEOUT=120
         ELAPSED=0
@@ -107,12 +107,12 @@ if [ "$DEVICES" -eq 0 ]; then
                     break
                 fi
             fi
-            
+
             echo -e "${YELLOW}⏳ Still waiting... (${ELAPSED}s/${TIMEOUT}s)${NC}"
             sleep 5
             ELAPSED=$((ELAPSED + 5))
         done
-        
+
         # Check if emulator started successfully
         DEVICES=$(adb devices | grep -v "List of devices" | grep -v "^$" | wc -l)
         if [ "$DEVICES" -eq 0 ]; then
@@ -139,7 +139,7 @@ if [ "$DEVICES" -gt 1 ]; then
 fi
 
 # Get package name from build.gradle (Expo uses different package name)
-PACKAGE_NAME="com.anonymous.example_expo"  # From the build.gradle we saw
+PACKAGE_NAME="io.scribeup.exposcribeupsdkexample"  # From the build.gradle we saw
 
 echo -e "${BLUE}🗑️  Uninstalling previous version (if exists)...${NC}"
 adb uninstall "$PACKAGE_NAME" 2>/dev/null || echo -e "${YELLOW}No previous installation found${NC}"

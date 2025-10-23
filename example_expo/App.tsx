@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Button,
   KeyboardAvoidingView,
@@ -9,10 +9,14 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import * as Linking from 'expo-linking';
 import ScribeUp, {
   ScribeUpWidget,
   ScribeupWidgetViewRef,
 } from '@scribeup/react-native-scribeup';
+
+const UNIVERSAL_HOST = 'scribeup.io';
+const UNIVERSAL_PATH_PREFIX = 'example_expo'; // matches https://scribeup.io/example_expo/...
 
 export default function App() {
   const [url, setUrl] = useState('');
@@ -20,6 +24,33 @@ export default function App() {
   const [showScribeup, setShowScribeup] = useState(false);
   const [showWidget, setShowWidget] = useState(false);
   const widgetRef = useRef<ScribeupWidgetViewRef>(null);
+
+  // --- minimal universal link handler additions ---
+  const openFromLink = useCallback((incomingUrl: string) => {
+    try {
+      const parsed = Linking.parse(incomingUrl);
+      if (parsed?.hostname === UNIVERSAL_HOST && parsed?.path?.startsWith(UNIVERSAL_PATH_PREFIX)) {
+        const qUrl = parsed.queryParams?.url as string | undefined;
+        const qProductName = parsed.queryParams?.productName as string | undefined;
+
+        if (qUrl) setUrl(qUrl);
+        if (qProductName) setProductName(qProductName);
+
+        setShowScribeup(true);
+      }
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    // cold start
+    Linking.getInitialURL().then((initial) => {
+      if (initial) openFromLink(initial);
+    });
+    // foreground events
+    const sub = Linking.addEventListener('url', ({ url }) => openFromLink(url));
+    return () => sub.remove();
+  }, [openFromLink]);
+  // --- end additions ---
 
   const onExitHandler = (error?: { message?: string; code?: number }, data?) => {
     console.log('onExitHandler', error, data);
@@ -94,7 +125,7 @@ export default function App() {
 
             {showWidget && (
               <View style={styles.widgetSection}>
-                <View style={styles.widgetControls}>
+                <View className="widgetControls" style={styles.widgetControls}>
                   <Button title="Reload" onPress={handleReloadWidget} />
                 </View>
 

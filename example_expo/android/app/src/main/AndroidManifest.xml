@@ -21,5 +21,14 @@
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
+    <activity android:name=".LinkHandlerActivity" android:exported="true" android:noHistory="true" android:excludeFromRecents="true" android:launchMode="singleTop" android:theme="@android:style/Theme.Translucent.NoTitleBar">
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="https" android:host="scribeup.io"/>
+        <data android:pathPrefix="/example_expo/open"/>
+      </intent-filter>
+    </activity>
   </application>
 </manifest>

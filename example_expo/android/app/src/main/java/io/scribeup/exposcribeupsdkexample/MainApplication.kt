@@ -1,4 +1,4 @@
-package com.anonymous.example_expo
+package io.scribeup.exposcribeupsdkexample
 
 import android.app.Application
 import android.content.res.Configuration

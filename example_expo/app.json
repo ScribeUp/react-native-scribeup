@@ -14,7 +14,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.example-expo"
+      "bundleIdentifier": "io.scribeup.ExpoScribeUpSDKExample",
+      "associatedDomains": [
+        "applinks:scribeup.io"
+      ]
     },
     "android": {
       "adaptiveIcon": {
@@ -22,8 +25,9 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.example_expo"
+      "package": "io.scribeup.exposcribeupsdkexample"
     },
+    "plugins": ["./plugins/with-link-handler"],
     "web": {
       "favicon": "./assets/images/favicon.png"
     }
