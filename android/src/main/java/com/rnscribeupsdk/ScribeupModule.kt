@@ -32,10 +32,10 @@ class ScribeupModule(reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
-  fun presentWithUrl(url: String, productName: String, promise: Promise) {
+  fun presentWithUrl(url: String, productName: String, enableBackButton: Boolean, promise: Promise) {
     try {
       currentPromise = promise
-      moduleImpl.present(url, productName)
+      moduleImpl.present(url, productName, enableBackButton)
       moduleImpl.setExitCallback { error ->
         hasExited = true
         if (error != null) {

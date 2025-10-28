@@ -141,6 +141,7 @@ export default function MyComponent() {
 <ScribeUp
   url: string;                              // required – authenticated manage-subscriptions URL
   productName?: string;                     // optional – title in navigation bar
+  enableBackButton?: boolean;               // optional (default: true) – controls Android back button/gesture behavior
   onExit?: (error: ExitError|null, data: object|null) => void;
   onEvent?: (data: object) => void;
 >
@@ -154,6 +155,9 @@ Receives two arguments:
 
 **`onEvent`**
 Emitted zero or more times during the session to notify about intermediate states or actions (e.g., UI transitions, user actions).
+
+**`enableBackButton`**
+Controls whether the Android back button and back gestures can close the SDK. When set to `true` (default), users can use the back button or back gesture to exit the subscription manager. When set to `false`, the back button and gestures are disabled, requiring users to use the in-sdk Exit button to exit. This property only affects Android devices.
 
 
 ### ScribeUpWidget (Embeddable)

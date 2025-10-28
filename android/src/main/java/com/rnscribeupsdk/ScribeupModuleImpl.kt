@@ -32,7 +32,7 @@ class ScribeupModuleImpl(private val reactContext: ReactApplicationContext) {
     this.exitCallback = callback
   }
 
-  fun present(url: String, productName: String) {
+  fun present(url: String, productName: String, enableBackButton: Boolean) {
     val activity: Activity? = reactContext.currentActivity
 
     // Check for null activity
@@ -106,7 +106,8 @@ class ScribeupModuleImpl(private val reactContext: ReactApplicationContext) {
             }
             sendEvent("ScribeupOnEvent", params)
           }
-        }
+        },
+        enableBackButton = enableBackButton
       )
     } catch (e: Exception) {
       Log.e("Scribeup", "Error presenting subscription manager: ${e.message}")

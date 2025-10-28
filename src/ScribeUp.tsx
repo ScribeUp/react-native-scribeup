@@ -55,6 +55,7 @@ type EventPayload = { data?: JsonObject };
 export interface ScribeUpProps {
   url: string;
   productName?: string;
+  enableBackButton?: boolean;
   onExit?: (error: ExitError | null, data: JsonObject | null) => void;
   onEvent?: (data: JsonObject) => void;
 }
@@ -72,7 +73,7 @@ class ScribeUp extends React.Component<ScribeUpProps> {
   private didExit = false;
 
   componentDidMount() {
-    const { url, productName = "" } = this.props;
+    const { url, productName = "", enableBackButton = true } = this.props;
 
     // Use module-backed emitter only if it implements the listener API.
     const canAttach =
@@ -115,7 +116,7 @@ class ScribeUp extends React.Component<ScribeUpProps> {
     );
 
     // Present the native UI. Support both promise- and event-based native APIs.
-    this.present(url, productName);
+    this.present(url, productName, enableBackButton);
   }
 
   componentWillUnmount() {
@@ -129,13 +130,17 @@ class ScribeUp extends React.Component<ScribeUpProps> {
     }
   }
 
-  private present(url: string, productName: string) {
+  private present(url: string, productName: string, enableBackButton: boolean) {
     if (!(Scribeup && typeof (Scribeup as any).presentWithUrl === "function")) {
       throw new Error(`ScribeUp: Native module not found for ${Platform.OS}`);
     }
 
     try {
-      const ret = (Scribeup as any).presentWithUrl(url, productName);
+      // iOS doesn't support enableBackButton yet, only pass it on Android
+      const ret =
+        Platform.OS === "android"
+          ? (Scribeup as any).presentWithUrl(url, productName, enableBackButton)
+          : (Scribeup as any).presentWithUrl(url, productName);
 
       // If native returns a Promise, also resolve to onExit (guarded to avoid duplicate calls).
       if (ret && typeof ret.then === "function") {

@@ -25,6 +25,7 @@ export interface ExitError {
 export interface ScribeUpProps {
   url: string;
   productName?: string;
+  enableBackButton?: boolean;
   onExit: (error: ExitError | null, data: JsonObject | null) => void;
   onEvent?: (data: JsonObject) => void;
 }
