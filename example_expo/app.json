@@ -25,9 +25,25 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "io.scribeup.exposcribeupsdkexample"
+      "package": "io.scribeup.exposcribeupsdkexample",
+      "intentFilters": [
+        {
+          "autoVerify": true,
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "https",
+              "host": "scribeup.io",
+              "pathPrefix": "/example_expo/open"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
     },
-    "plugins": ["./plugins/with-link-handler"],
     "web": {
       "favicon": "./assets/images/favicon.png"
     }
