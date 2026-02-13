@@ -1,6 +1,6 @@
 {
   "name": "@scribeup/react-native-scribeup",
-  "version": "0.7.8",
+  "version": "0.7.9",
   "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -52,7 +52,7 @@
   },
   "config": {
     "nativeSDKVersions": {
-      "android": "0.10.7",
+      "android": "0.10.8",
       "ios": "0.9.10"
     }
   }
